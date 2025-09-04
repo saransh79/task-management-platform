@@ -4,8 +4,8 @@ A full-stack task management application built with Next.js and Node.js, featuri
 
 ## 🚀 Live Demo
 
-- **Frontend**: [Deploy on Vercel]
-- **Backend**: [Deploy on Railway/Render]
+- **Frontend**: (https://task-management-platform-k32c.vercel.app/)
+- **Backend**: (https://task-management-platform-two.vercel.app/)
 
 ## 📋 Features
 
