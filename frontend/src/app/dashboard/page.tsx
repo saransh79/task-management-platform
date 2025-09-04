@@ -12,6 +12,7 @@ import Pagination from "@/components/tasks/Pagination";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setFilters } from "@/store/slices/taskSlice";
 import { useTasksQuery } from "@/lib/queries/taskQueries";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Task } from "@/types";
 
 export default function DashboardPage() {
@@ -21,6 +22,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [searchInput, setSearchInput] = useState(filters.search);
+
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   const { isLoading: isLoadingTasks } = useTasksQuery();
 
@@ -31,15 +35,17 @@ export default function DashboardPage() {
   }, [user, router]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(setFilters({ page: 1 }));
-    }, 500);
+    if (debouncedSearch !== filters.search) {
+      dispatch(setFilters({ search: debouncedSearch, page: 1 }));
+    }
+  }, [debouncedSearch, filters.search, dispatch]);
 
-    return () => clearTimeout(timer);
-  }, [filters.search, dispatch]);
+  useEffect(() => {
+    setSearchInput(filters.search);
+  }, [filters.search]);
 
   const handleSearchChange = (search: string) => {
-    dispatch(setFilters({ search, page: 1 }));
+    setSearchInput(search);
   };
 
   const handleStatusChange = (status: string) => {
@@ -76,7 +82,7 @@ export default function DashboardPage() {
       <Header />
 
       <TaskFilters
-        search={filters.search}
+        search={searchInput}
         status={filters.status}
         onSearchChange={handleSearchChange}
         onStatusChange={handleStatusChange}
