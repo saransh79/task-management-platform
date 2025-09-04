@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckSquare, LogOut, Menu, User } from "lucide-react";
+import { CheckSquare, LogOut, Menu, User, BarChart3 } from "lucide-react";
 import { useState } from "react";
 
 import { useLogoutMutation } from "@/lib/queries/authQueries";
 import { useAppSelector } from "@/store";
+import UserInsights from "@/components/modals/UserInsights";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -15,6 +16,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const { user } = useAppSelector((state) => state.auth);
   const logoutMutation = useLogoutMutation();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -71,6 +73,17 @@ export default function Header({ onMenuClick }: HeaderProps) {
                 </div>
 
                 <button
+                  onClick={() => {
+                    setShowInsights(true);
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  <span>View Insights</span>
+                </button>
+
+                <button
                   onClick={handleLogout}
                   className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
@@ -89,6 +102,12 @@ export default function Header({ onMenuClick }: HeaderProps) {
           onClick={() => setShowUserMenu(false)}
         />
       )}
+
+      {/* User Insights Modal */}
+      <UserInsights
+        isOpen={showInsights}
+        onClose={() => setShowInsights(false)}
+      />
     </header>
   );
 }

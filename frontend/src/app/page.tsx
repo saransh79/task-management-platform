@@ -6,6 +6,8 @@ import { ArrowRight, CheckSquare } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,7 +168,7 @@ export default function Home() {
               <span className="text-sm text-gray-600">TaskFlow</span>
             </div>
             <p className="text-sm text-gray-500">
-              © 2024 TaskFlow. Built with Next.js and Node.js.
+              © {currentYear} TaskFlow. Built with ❤️
             </p>
           </div>
         </div>
