@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 
 import Header from "@/components/layout/Header";
@@ -16,10 +15,9 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Task } from "@/types";
 
 export default function DashboardPage() {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
   const { tasks, pagination, filters } = useAppSelector((state) => state.tasks);
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchInput, setSearchInput] = useState(filters.search);
@@ -27,12 +25,6 @@ export default function DashboardPage() {
   const debouncedSearch = useDebounce(searchInput, 500);
 
   const { isLoading: isLoadingTasks } = useTasksQuery();
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
-  }, [user, router]);
 
   useEffect(() => {
     if (debouncedSearch !== filters.search) {
@@ -73,7 +65,23 @@ export default function DashboardPage() {
     setEditingTask(null);
   };
 
-  if (!user) {
+  // Show loading state while auth is being initialized
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated || !user) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
     return null;
   }
 
